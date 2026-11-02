@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>HASoidao</title>
+    <style>
+        /* รีเซ็ตค่าพื้นฐานและตั้งค่า Body */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100dvh; /* ใช้ 100dvh เพื่อให้พอดีกับหน้าจอมือถือรวมถึง Safari */
+            overflow: hidden; /* ปิด Scrollbar ของหน้าเว็บหลัก */
+            background-color: #ffffff;
+            font-family: 'Prompt', 'Sarabun', sans-serif;
+        }
+
+        /* ตั้งค่า Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* อนิเมชั่นหมุน (Spinner) */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #555;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* คอนเทนเนอร์สำหรับ iFrame */
+        .iframe-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        /* ตั้งค่า iFrame */
+        iframe {
+            border: none; /* ไม่มีขอบ */
+            width: 100%;
+            /* เทคนิคซ่อนแบนเนอร์ Google Apps Script: ดัน iFrame ขึ้นไป -28px ถึง -30px */
+            height: calc(100dvh + 30px);
+            margin-top: -30px; 
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- หน้าต่างโหลด (Loading Screen) -->
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <div class="loading-text">กำลังโหลดข้อมูล...</div>
+    </div>
+
+    <!-- กรอบ iFrame สำหรับเว็บแอป -->
+    <div class="iframe-container">
+        <iframe 
+            id="app-frame"
+            src="https://script.google.com/macros/s/AKfycbx36se0SfZ_FnHeMsHal4Ku_pkwoaFM93z4U3BCOcKRdqhc7dFGeG-06WlzJuHbOe4/exec" 
+            allow="fullscreen" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- สคริปต์จัดการ Loading Screen -->
+    <script>
+        const iframe = document.getElementById('app-frame');
+        const loadingScreen = document.getElementById('loading-screen');
+
+        // เมื่อ iFrame โหลดเนื้อหาเสร็จสมบูรณ์ ให้ทำการเฟด Loading Screen ออก
+        iframe.addEventListener('load', function() {
+            loadingScreen.style.opacity = '0';
+            
+            // รอให้อนิเมชั่นเฟดทำงานเสร็จ (0.5 วินาที) แล้วค่อยลบ Element ออกจากการแสดงผล
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
